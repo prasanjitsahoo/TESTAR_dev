@@ -1,0 +1,49 @@
+name: TESTAR Chromedriver Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: macos-14-arm64  # Change to the appropriate runner version
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'  # Change this to '17' or '21' if needed
+
+      - name: Install dependencies
+        run: |
+          brew install gradle  # Ensure Gradle is installed
+
+      - name: Initialize and build TESTAR
+        run: |
+          cd TESTAR_dev
+          ./gradlew init_workflow_test
+          ./gradlew build
+          ./gradlew installDist
+
+      - name: Run Chromedriver test
+        run: |
+          cd TESTAR_dev
+          ./gradlew runTestWebdriverSuspiciousTagMacOS
+
+      - name: Check for widget detection
+        run: |
+          # Here you might want to check logs or results to confirm widget detection
+          # Adjust based on your specific output
+          if grep -q 'Forum' ./path/to/logfile; then
+            echo "Widget detected successfully."
+          else
+            echo "Widget detection failed."
+            exit 1
+          fi
