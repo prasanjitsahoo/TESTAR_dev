@@ -1,11 +1,19 @@
 name: TESTAR Chromedriver Test
 
 on:
-  workflow_dispatch:
+ workflow_dispatch:
 
 jobs:
   test:
-    runs-on: macos-14-arm64  # Change to the appropriate runner version
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: 
+          - macos-14-arm64
+          - macos-15-arm64
+          - ubuntu-22.04
+          - windows-latest  # Add or modify OS as needed
 
     steps:
       - name: Checkout repository
@@ -18,7 +26,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install gradle  # Ensure Gradle is installed
+          if [[ "${{ matrix.os }}" == "macos-14-arm64" ]]; then
+            brew install gradle  # Ensure Gradle is installed on macOS
+          elif [[ "${{ matrix.os }}" == "ubuntu-22.04" ]]; then
+            sudo apt-get update
+            sudo apt-get install -y gradle  # Install Gradle on Ubuntu
+          fi
 
       - name: Initialize and build TESTAR
         run: |
