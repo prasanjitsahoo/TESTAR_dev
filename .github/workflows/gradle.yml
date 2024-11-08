@@ -249,7 +249,7 @@ jobs:
       run: xvfb-run ./gradlew runTestWebdriverSuspiciousTagUbuntu
 
   macos:
-    runs-on: macos-13, macos-latest
+    runs-on: macos-latest
     timeout-minutes: 10
     continue-on-error: true
 
